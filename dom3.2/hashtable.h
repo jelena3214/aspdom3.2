@@ -43,6 +43,12 @@ class HashTable {
 		if (i)depth++;
 		else depth--;
 	}
+	bool emptyBaket(int addr) {
+		for (int i = 0; i < baket; i++) {
+			if (table[addr]->elems[i]->key != -1)return false;
+		}
+		return true;
+	}
 
 
 public:
