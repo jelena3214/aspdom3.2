@@ -16,7 +16,8 @@ using namespace std;
 class HashTable {
 	int baket;
 	int p; //p bita kljuca
-	int depth;  
+	int depth; 
+	int startd;
 
 	struct Elem {
 		Student *st;
@@ -45,7 +46,7 @@ class HashTable {
 
 
 public:
-	HashTable(int bak, int pp, int b) : baket(bak), p(pp), depth(b) {
+	HashTable(int bak, int pp, int b) : baket(bak), p(pp), depth(b), startd(b) {
 		int size = pow(2, depth);
 		for (int i = 0; i < size; i++) {
 			Baket* b = new Baket;

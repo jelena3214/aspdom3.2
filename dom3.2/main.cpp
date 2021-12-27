@@ -1,7 +1,7 @@
 #include "hashtable.h"
 using namespace std;
 int main() {
-	/*HashTable ht(1, 64, 2);
+	HashTable ht(1, 64, 2);
 	Student st1(1, "jeke", "peke");
 	Student st2(0, "jeke", "peke");
 	Student st3(3, "jeke", "peke");
@@ -16,7 +16,7 @@ int main() {
 	ht.insertKey(st6);
 	Student st7(15, "jeke", "peke");
 	ht.insertKey(st7);
-	Student st8(22, "jeke", "peke");
-	//ht.insertKey(st8);
-	cout << ht;*/
+	Student st8(10, "jeke", "peke");
+	ht.insertKey(st8);
+	cout << ht;
 }

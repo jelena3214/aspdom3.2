@@ -27,122 +27,97 @@ bool HashTable::insertKey(Student& st)
 		}
 	}
 
+	//kada je baket pun prvo rehesiramo
+	setB(1); //povecavamo broj bitova koje gledamo
+	Baket* newBaket = new Baket;
+	Elem* newElem = new Elem{ index, &st };
 
-	if (table[addr]->baketLen == baket) {
-		setB(1); //povecavamo broj bitova koje gledamo
-		Baket* newBaket = new Baket;
-		Elem* newElem = new Elem{ index, &st };
+	vector<Elem*>allElems;
+	for (int i = 0; i < baket; i++) {
+		allElems.push_back(table[addr]->elems[i]);
+	}
+	allElems.push_back(newElem);
 
-		vector<Elem*>allElems;
-		for (int i = 0; i < baket; i++) {
-			allElems.push_back(table[addr]->elems[i]);
-		}
-		allElems.push_back(newElem);
+	while (true) {
+		table[addr]->elems.clear();
+		table[addr]->baketLen = 0;
+		table[addr]->pointers = 0;
+		table[addr]->depthBaket++;
+		newBaket->baketLen = 0;
+		newBaket->pointers = 0;
+		newBaket->depthBaket = table[addr]->depthBaket;
+		//rehasiranje
 
-		while (true) {
-			table[addr]->elems.clear(); //vidi da l treba ovo ili sve na nullptr
-			table[addr]->baketLen = 0;
-			table[addr]->pointers = 0;
-			table[addr]->depthBaket++;
-			newBaket->baketLen = 0;
-			newBaket->pointers = 0;
-			newBaket->depthBaket = table[addr]->depthBaket;
-			//rehasiranje
-
-			int len = allElems.size(), newAddr, bit, oldlen = 0, newlen = 0, numofbits;
-			for (int i = 0; i < len; i++) {
-				newAddr = getAdr(allElems[i]->key);
-				//numofbits = log2(newAddr) + 1;
-				if (newAddr == 0)bit = 0;
-				else {
-					bit = (newAddr >> (depth - 1)) & 1; //izdvanjamo nti bit od kraja ako to treba onda samo newadr>>depth-1 and 1
-				}
-				if (bit == 0) {
-					table[addr]->elems.push_back(allElems[i]);
-					table[addr]->elems[oldlen++]->key = allElems[i]->key;
-					table[addr]->baketLen++;
-				}
-				else {
-					newBaket->elems.push_back(allElems[i]);
-					newBaket->elems[newlen++]->key = allElems[i]->key;
-					newBaket->baketLen++;
-				}
+		int len = allElems.size(), newAddr, bit, oldlen = 0, newlen = 0, shift = table[addr]->depthBaket - 1;
+		for (int i = 0; i < len; i++) {
+			newAddr = getAdr(allElems[i]->key);
+			//numofbits = log2(newAddr) + 1;
+			if (newAddr == 0)bit = 0;
+			else {
+				bit = (newAddr >> shift) & 1; //izdvanjamo nti bit od kraja ako to treba onda samo newadr>>depth-1 and 1
 			}
-
-			if (newBaket->elems.size() > baket || table[addr]->elems.size() > baket) {//povecamo depth jer uzimamo jos jedan bit
-				//size = pow(2, depth);
-				setB(1);
-				n++;
-				
-			}
-			else if (depth > p) {
-				cout << "Nije moguce ubacivanje\n";
-				return false;
-				break;
+			if (bit == 0) {
+				table[addr]->elems.push_back(allElems[i]);
+				table[addr]->elems[oldlen++]->key = allElems[i]->key;
+				table[addr]->baketLen++;
 			}
 			else {
-				break;
+				newBaket->elems.push_back(allElems[i]);
+				newBaket->elems[newlen++]->key = allElems[i]->key;
+				newBaket->baketLen++;
 			}
 		}
 
-		//prepovezivanje
-		if (table[addr]->depthBaket == depth) {
-			//sirenje tabele
-			int newSize = pow(2, depth);
-			for (int i = size; i < newSize; i++) {
-				Baket* b = new Baket;
-				table.push_back(b);
-			}
-
-
-			vector<Baket*> allBaket;
-			int i = 0;
-			while (i <= addr) {
-				allBaket.push_back(table[i]);
-				i += (table[i]->pointers != 0 ? table[i]->pointers : 1);
-			}
-			allBaket.push_back(newBaket);
-
-			while (i < size) {
-				allBaket.push_back(table[i]);
-				i += (table[i]->pointers != 0 ? table[i]->pointers : 1);
-			}
-			int oldsize = size;
+		if (newBaket->elems.size() > baket || table[addr]->elems.size() > baket) {//povecamo depth jer uzimamo jos jedan bit
 			size = pow(2, depth);
-			int k = allBaket.size(), len = 0;
-			for (int i = 0; i < k; i++) {
-				if (allBaket[i]->pointers == 0) {
-					table[len] = allBaket[i];
-					table[len + oldsize] = allBaket[i+1];
-					len++, i++;
-					continue;
-				}
-				//int l = allBaket[i]->pointers * 2;
-				//for (int j = 0; j < l; j++) {
-					//table[len] = allBaket[i];
-					//table[len++]->pointers++;
-				//}
-				table[len] = allBaket[i];
-				table[len+oldsize] = allBaket[i];
-				//table[len + oldsize]->pointers++;
-				len++;
-				
-			}
-			return true;
+			if (n > 2)setB(1);
+			n++;
+
+		}
+		else if (depth > p) {
+			cout << "Nije moguce ubacivanje\n";
+			return false;
+			break;
 		}
 		else {
-			int i = 0;
-			int l = size / 2;
-			if(addr+l < pow(2,depth-n))if (table[addr + l] == table[addr])i = addr+1; //novi kacimo na addr+1
-			if (addr - l < pow(2, depth-n))if (table[addr - l] == table[addr])i = addr; //novi kacimo na addr
-			table[i] = newBaket;
-			newBaket->pointers++;
-			setB(0);
-			return true;
+			break;
 		}
 	}
+
+
+
+	if (table[addr]->depthBaket == depth) {//sirimo
+
+		int help = (n > 1 ? 1 : 0);
+		size = pow(2, depth - n + help);
+		int newSize = pow(2, depth);
+		int k = 0;
+		for (int i = size; i < newSize; i++) {
+			if (k > table.size() - 1)k = 0;
+			table.push_back(table[k++]);
+		}
+		for (int i = 0; i < size; i++) {
+			table[i]->pointers += 1;
+		}
+		table[addr]->pointers += n - 1;
+		
+		int diff = newSize - size;
+		newBaket->pointers++;
+		table[addr + diff] = newBaket;
+
+	}
+	else {
+		int i = 0;
+		int l = size / 2;
+		table[addr]->pointers++;
+		if (addr + l < pow(2, depth - n))if (table[addr + l] == table[addr])i = addr + 1; //novi kacimo na addr+1
+		if (addr - l < pow(2, depth - n))if (table[addr - l] == table[addr])i = addr; //novi kacimo na addr
+		table[i] = newBaket;
+		newBaket->pointers++;
+		setB(0);
+		return true;
+	}
 	
-	return false;
 
 }
 
@@ -213,3 +188,68 @@ int HashTable::keysInPlace(int i)
 		if (table[i] != nullptr && table[i]->elems.size() > 0)delete(table[i]), table[i] = nullptr;
 	}
 }*/
+
+/*
+	
+		//prepovezivanje
+		if (table[addr]->depthBaket == depth || n > 1) {
+			//sirenje tabele
+			int help = (n > 1 ? 1 : 0);
+			size = pow(2, depth - n + help);
+			int newSize = pow(2, depth);
+			for (int i = size; i < newSize; i++) {
+				Baket* b = new Baket;
+				table.push_back(b);
+			}
+
+
+			vector<Baket*> allBaket;
+			int i = 0;
+			while (i <= addr) {
+				allBaket.push_back(table[i]);
+				i += (table[i]->pointers != 0 ? table[i]->pointers : 1);
+			}
+			allBaket.push_back(newBaket);
+
+			while (i < size) {
+				allBaket.push_back(table[i]);
+				i += (table[i]->pointers != 0 ? table[i]->pointers : 1);
+			}
+			int oldsize = size;
+			size = pow(2, depth);
+			int k = allBaket.size(), len = 0;
+			for (int i = 0; i < k; i++) {
+				if (allBaket[i]->pointers == 0) {
+					table[len] = allBaket[i];
+					table[len + oldsize] = allBaket[i+1];
+					table[len + oldsize]->pointers++;
+					table[len++]->pointers++;
+					i++;
+					continue;
+				}
+				//int l = allBaket[i]->pointers * 2;
+				//for (int j = 0; j < l; j++) {
+					//table[len] = allBaket[i];
+					//table[len++]->pointers++;
+				//}
+				table[len] = allBaket[i];
+				table[len+oldsize] = allBaket[i];
+				table[len + oldsize]->pointers++;
+				table[len++]->pointers++;
+				
+			}
+			return true;
+		}
+		else {
+			int i = 0;
+			int l = size / 2;
+			if(addr+l < pow(2,depth-n))if (table[addr + l] == table[addr])i = addr+1; //novi kacimo na addr+1
+			if (addr - l < pow(2, depth-n))if (table[addr - l] == table[addr])i = addr; //novi kacimo na addr
+			table[i] = newBaket;
+			newBaket->pointers++;
+			setB(0);
+			return true;
+		}
+	}
+	
+	return false;*/
