@@ -1,7 +1,7 @@
 #include "hashtable.h"
 //ENUM
 
-//TO DO: BRISANJE(SAZIMANJE), destruktor
+//TO DO: destruktor
 
 //OVDE SVE UZIMAM P POSLEDNJIH BITOVA
 bool HashTable::insertKey(Student& st)
@@ -263,8 +263,8 @@ ostream& operator<<(ostream& os, const HashTable& ht)
 
 double HashTable::fillRatio()
 {
-	int size = pow(2, depth);
-	return size / keyCount();
+	double size = pow(2, depth);
+	return double(size / keyCount());
 }
 
 int HashTable::keysInPlace(int i)
