@@ -1,6 +1,8 @@
 #include "hashtable.h"
 //ENUM
 
+//TO DO: BRISANJE(SAZIMANJE), PRETRAGA, UBACIVANJE KAD SVI OVU U ISTI BAKET, destruktor
+
 //STA AKO SVI PONOVO U ISTI BAKET, IDE SE PO JOS JEDAN BIT
 //OVDE SVE UZIMAM P POSLEDNJIH BITOVA
 bool HashTable::insertKey(Student& st)
@@ -9,9 +11,9 @@ bool HashTable::insertKey(Student& st)
 	int position = 0, addr, secondAdr = 0;
 	long index = st.indeks;
 	if (depth == p)return false; //p je max bitova kojih mozemo uzeti za hesiranje
-
+	
 	addr = getAdr(index);
-
+	int n = 1;
 	for (int i = 0; i < baket; i++) {
 		if (table[addr]->elems[i]->key == index) { //vec postojki kljuc
 			return false;
@@ -37,32 +39,49 @@ bool HashTable::insertKey(Student& st)
 		}
 		allElems.push_back(newElem);
 
-		table[addr]->elems.clear(); //vidi da l treba ovo ili sve na nullptr
-		table[addr]->baketLen = 0;
-		table[addr]->pointers = 0;
-		table[addr]->depthBaket++;
-		newBaket->baketLen = 0;
-		newBaket->pointers = 0;
-		newBaket->depthBaket = table[addr]->depthBaket;
-		//rehasiranje
+		while (true) {
+			table[addr]->elems.clear(); //vidi da l treba ovo ili sve na nullptr
+			table[addr]->baketLen = 0;
+			table[addr]->pointers = 0;
+			table[addr]->depthBaket++;
+			newBaket->baketLen = 0;
+			newBaket->pointers = 0;
+			newBaket->depthBaket = table[addr]->depthBaket;
+			//rehasiranje
 
-		int len = allElems.size(), newAddr, bit, oldlen = 0, newlen = 0, numofbits;
-		for (int i = 0; i < len; i++) {
-			newAddr = getAdr(allElems[i]->key);
-			numofbits = log2(newAddr) + 1;
-			if (newAddr == 0)bit = 0;
-			else {
-				bit = (newAddr >> (depth-1)) & 1; //izdvanjamo nti bit od kraja ako to treba onda samo newadr>>depth-1 and 1
+			int len = allElems.size(), newAddr, bit, oldlen = 0, newlen = 0, numofbits;
+			for (int i = 0; i < len; i++) {
+				newAddr = getAdr(allElems[i]->key);
+				//numofbits = log2(newAddr) + 1;
+				if (newAddr == 0)bit = 0;
+				else {
+					bit = (newAddr >> (depth - 1)) & 1; //izdvanjamo nti bit od kraja ako to treba onda samo newadr>>depth-1 and 1
+				}
+				if (bit == 0) {
+					table[addr]->elems.push_back(allElems[i]);
+					table[addr]->elems[oldlen++]->key = allElems[i]->key;
+					table[addr]->baketLen++;
+				}
+				else {
+					newBaket->elems.push_back(allElems[i]);
+					newBaket->elems[newlen++]->key = allElems[i]->key;
+					newBaket->baketLen++;
+				}
 			}
-			if (bit == 0) {
-				table[addr]->elems.push_back(allElems[i]);
-				table[addr]->elems[oldlen++]->key = allElems[i]->key;
-				table[addr]->baketLen++;
+
+			if (newBaket->elems.size() > baket || table[addr]->elems.size() > baket) {//povecamo depth jer uzimamo jos jedan bit
+				//size = pow(2, depth);
+				setB(1);
+				n++;
+				
+			}
+			else if (depth > p) {
+				cout << "Nije moguce ubacivanje\n";
+				return false;
+				break;
 			}
 			else {
-				newBaket->elems.push_back(allElems[i]);
-				newBaket->elems[newlen++]->key = allElems[i]->key;
-				newBaket->baketLen++;
+				break;
 			}
 		}
 
@@ -114,8 +133,8 @@ bool HashTable::insertKey(Student& st)
 		else {
 			int i = 0;
 			int l = size / 2;
-			if(addr+l < pow(2,depth-1))if (table[addr + l] == table[addr])i = addr+1; //novi kacimo na addr+1
-			if (addr - l < pow(2, depth-1))if (table[addr - l] == table[addr])i = addr; //novi kacimo na addr
+			if(addr+l < pow(2,depth-n))if (table[addr + l] == table[addr])i = addr+1; //novi kacimo na addr+1
+			if (addr - l < pow(2, depth-n))if (table[addr - l] == table[addr])i = addr; //novi kacimo na addr
 			table[i] = newBaket;
 			newBaket->pointers++;
 			setB(0);
