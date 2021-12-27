@@ -50,6 +50,15 @@ class HashTable {
 		return true;
 	}
 
+	int findMaxDepth() {
+		int size = pow(2, depth);
+		int max = 0;
+		for (int i = 0; i < size; i++) {
+			if (max < table[i]->depthBaket)max = table[i]->depthBaket;
+		}
+		return max;
+	}
+
 
 public:
 	HashTable(int bak, int pp, int b) : baket(bak), p(pp), depth(b), startd(b) {

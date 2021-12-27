@@ -1,7 +1,7 @@
 #include "hashtable.h"
 //ENUM
 
-//TO DO: BRISANJE(SAZIMANJE), PRETRAGA, UBACIVANJE KAD SVI OVU U ISTI BAKET, destruktor
+//TO DO: BRISANJE(SAZIMANJE), destruktor
 
 //OVDE SVE UZIMAM P POSLEDNJIH BITOVA
 bool HashTable::insertKey(Student& st)
@@ -136,6 +136,71 @@ Student* HashTable::findKey(long index)
 		}
 	}
 	return nullptr;
+}
+
+bool HashTable::deleteKey(long index) {
+	if (findKey(index) != nullptr) {
+		int addr = getAdr(index);
+		for (int i = 0; i < baket; i++) {
+			if (table[addr]->elems[i]->key == index) {
+				table[addr]->elems.erase(table[addr]->elems.begin() + i);
+				break;
+			}
+		}
+		int l = pow(2, startd);
+		int size = pow(2, depth);
+		
+		int pos, flag = 0; //vidi da l treba while?
+		if (addr + l < size) {
+			pos = addr + l;
+			flag = 1;
+		}
+		else if (addr - l > 0) {
+			pos = addr - l;
+			flag = 1;
+		}
+		if (flag && table[addr]->elems.size() + table[pos]->elems.size() <= baket) {//spajamo
+			Baket* b = new Baket;
+			
+			for (int i = 0; i < table[addr]->elems.size(); i++) {
+				b->elems.push_back(table[addr]->elems[i]);
+				b->baketLen++;
+			}
+			for (int i = 0; i < table[pos]->elems.size(); i++) {
+				b->elems.push_back(table[pos]->elems[i]);
+				b->baketLen++;
+			}
+			b->depthBaket--;
+			table[addr]->depthBaket--;
+			table[pos]->depthBaket--;
+			b->pointers += table[addr]->pointers;
+			b->pointers += table[pos]->pointers;
+			
+			int max = findMaxDepth(), i;
+			if (depth > max) {
+				int size = pow(2, depth);
+				setB(0);
+				int newSize = pow(2, depth);
+
+				for (int i = newSize; i < size; i++) {
+					table.pop_back();
+				}
+				if (pos < newSize)i = pos;
+				else i = addr;
+				table[i] = b;
+
+				for (int i = 0; i < newSize; i++) {
+					table[i]->pointers--;
+				}
+
+			}
+		}
+
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 void HashTable::clear()
