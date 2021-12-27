@@ -31,5 +31,12 @@ int main() {
 	ht.deleteKey(12);
 	ht.deleteKey(25);
 	ht.deleteKey(22);
+	ht.insertKey(st11);
+	Student st12(48, "jeke", "peke");
+	ht.insertKey(st12);
+	Student st13(275, "jeke", "peke");
+	ht.insertKey(st13);
+	Student st14(89, "jeke", "peke");
+	ht.insertKey(st14);
 	cout << ht;
 }
