@@ -10,11 +10,11 @@ int main() {
 	ht.insertKey(st3);
 	Student st4(2, "jeke", "peke");
 	ht.insertKey(st4);
-	Student st5(4, "jeke", "peke");
+	Student st5(5, "jeke", "peke");
 	ht.insertKey(st5);
-	Student st6(13, "jeke", "peke");
+	Student st6(12, "jeke", "peke");
 	ht.insertKey(st6);
-	Student st7(14, "jeke", "peke");
+	Student st7(15, "jeke", "peke");
 	ht.insertKey(st7);
 	cout << ht;
 }

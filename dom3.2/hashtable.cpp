@@ -1,7 +1,8 @@
 #include "hashtable.h"
 //ENUM
 
-
+//STA AKO SVI PONOVO U ISTI BAKET, IDE SE PO JOS JEDAN BIT
+//OVDE SVE UZIMAM P POSLEDNJIH BITOVA
 bool HashTable::insertKey(Student& st)
 {
 	int size = pow(2, depth);
@@ -48,10 +49,10 @@ bool HashTable::insertKey(Student& st)
 		int len = allElems.size(), newAddr, bit, oldlen = 0, newlen = 0, numofbits;
 		for (int i = 0; i < len; i++) {
 			newAddr = getAdr(allElems[i]->key);
-			//numofbits = log2(newAddr) + 1;
+			numofbits = log2(newAddr) + 1;
 			if (newAddr == 0)bit = 0;
 			else {
-				bit = (newAddr >> (depth-1)) & 1; //izdvanjamo nti bit od kraja
+				bit = (newAddr >> (depth-1)) & 1; //izdvanjamo nti bit od kraja ako to treba onda samo newadr>>depth-1 and 1
 			}
 			if (bit == 0) {
 				table[addr]->elems.push_back(allElems[i]);
@@ -77,7 +78,7 @@ bool HashTable::insertKey(Student& st)
 
 			vector<Baket*> allBaket;
 			int i = 0;
-			while (i < addr) {
+			while (i <= addr) {
 				allBaket.push_back(table[i]);
 				i += (table[i]->pointers != 0 ? table[i]->pointers : 1);
 			}
@@ -87,27 +88,34 @@ bool HashTable::insertKey(Student& st)
 				allBaket.push_back(table[i]);
 				i += (table[i]->pointers != 0 ? table[i]->pointers : 1);
 			}
-
+			int oldsize = size;
 			size = pow(2, depth);
 			int k = allBaket.size(), len = 0;
 			for (int i = 0; i < k; i++) {
 				if (allBaket[i]->pointers == 0) {
 					table[len] = allBaket[i];
-					table[len++]->pointers++;
+					table[len + oldsize] = allBaket[i+1];
+					len++, i++;
 					continue;
 				}
-				int l = allBaket[i]->pointers * 2;
-				for (int j = 0; j < l; j++) {
-					table[len] = allBaket[i];
-					table[len++]->pointers++;
-				}
+				//int l = allBaket[i]->pointers * 2;
+				//for (int j = 0; j < l; j++) {
+					//table[len] = allBaket[i];
+					//table[len++]->pointers++;
+				//}
+				table[len] = allBaket[i];
+				table[len+oldsize] = allBaket[i];
+				//table[len + oldsize]->pointers++;
+				len++;
+				
 			}
 			return true;
 		}
 		else {
 			int i = 0;
-			if (table[addr + 1] == table[addr])i = addr+1; //novi kacimo na addr+1
-			if (table[addr - 1] == table[addr])i = addr; //novi kacimo na addr
+			int l = size / 2;
+			if(addr+l < pow(2,depth-1))if (table[addr + l] == table[addr])i = addr+1; //novi kacimo na addr+1
+			if (addr - l < pow(2, depth-1))if (table[addr - l] == table[addr])i = addr; //novi kacimo na addr
 			table[i] = newBaket;
 			newBaket->pointers++;
 			setB(0);
