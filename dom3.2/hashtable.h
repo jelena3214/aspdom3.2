@@ -6,7 +6,6 @@
 #include "adressfunction.h"
 #include "student.h"
 #include<cmath>
-#include "quadratichashing.h"
 
 using namespace std;
 
@@ -15,7 +14,6 @@ using namespace std;
 //Testiraj sve
 
 class HashTable {
-	AdressFunction *collisionFunction;
 	int baket;
 	int p; //p bita kljuca
 	int depth;  
@@ -23,29 +21,45 @@ class HashTable {
 	struct Elem {
 		Student *st;
 		long key;
-		Elem(long k, Student* s = nullptr) :st(s), key(k){};
+		
+		Elem(long k, Student * s = nullptr) :st(s), key(k){};
 	};
 
-	vector <vector<Elem*>> table;
+	struct Baket {
+		vector<Elem*> elems;
+		int depthBaket;
+		int baketLen;
+		int pointers;
+	};
+
+	vector <Baket*> table;
 
 	int getAdr(long index) {
-		return index % int(pow(2, p)); //sta ovde raditi oko zaokruzivanja?
+		return index % int(pow(2, depth)); //sta ovde raditi oko zaokruzivanja?
 	}
 	int keysInPlace(int i);
+	void setB(int i) {
+		if (i)depth++;
+		else depth--;
+	}
+
 
 public:
-	HashTable(int bak, int pp, AdressFunction* addressFunction, int b) : baket(bak), p(pp), collisionFunction(addressFunction), depth(b) {
-		int size = depth * pow(2, depth);
+	HashTable(int bak, int pp, int b) : baket(bak), p(pp), depth(b) {
+		int size = pow(2, depth);
 		for (int i = 0; i < size; i++) {
-			vector<Elem*> vec;
+			Baket* b = new Baket;
+			b->depthBaket = depth;
+			b->baketLen = 0;
+			b->pointers = 0;
 			for (int j = 0; j < baket; j++) {
-				Elem* newElem = new Elem{ 0 };
-				vec.push_back(newElem);
+				Elem* newElem = new Elem{ -1 };
+				b->elems.push_back(newElem);
 			}
-			table.push_back(vec);
+			table.push_back(b);
 		}
 	};
-	~HashTable();
+	//~HashTable();
 	Student* findKey(long index);
 	bool insertKey(Student& st);
 	bool deleteKey(long index);

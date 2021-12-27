@@ -21,18 +21,15 @@
     <ClInclude Include="student.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="quadratichashing.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="adressfunction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="student.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="hashtable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

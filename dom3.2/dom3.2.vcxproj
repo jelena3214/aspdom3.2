@@ -139,13 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="adressfunction.h" />
     <ClInclude Include="hashtable.h" />
-    <ClInclude Include="quadratichashing.h" />
     <ClInclude Include="student.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="hashtable.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="student.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
