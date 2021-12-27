@@ -110,12 +110,23 @@ bool HashTable::insertKey(Student& st)
 
 	}
 	else {
-		int i = 0;
+		int i = 0, flagLow = 0;
 		int l = size / 2;
 		table[addr]->pointers++;
-		if (addr + l < pow(2, depth - n))if (table[addr + l] == table[addr])i = addr + 1; //novi kacimo na addr+1
-		if (addr - l < pow(2, depth - n))if (table[addr - l] == table[addr])i = addr; //novi kacimo na addr
-		table[i] = newBaket;
+		if (addr + l < pow(2, depth - n))if (table[addr + l] == table[addr])i = addr + l; //novi kacimo na addr+1
+		if (addr - l >= 0 && addr - l < pow(2, depth - n))
+		{
+			if (table[addr - l] == table[addr])i = addr, flagLow = 1; //novi kacimo na addr
+		}
+		if (!flagLow) {
+			table[i] = newBaket;
+		}
+		else {
+			Baket* tmp = table[addr];
+			table[addr] = newBaket;
+			table[i-l] = tmp;
+		}
+
 		newBaket->pointers++;
 		setB(0);
 		return true;
@@ -155,13 +166,13 @@ bool HashTable::deleteKey(long index) {
 			pos = addr + l;
 			flag = 1;
 		}
-		else if (addr - l > 0) {
+		else if (addr - l >= 0) {
 			pos = addr - l;
 			flag = 1;
 		}
 		if (flag && table[addr]->elems.size() + table[pos]->elems.size() <= baket) {//spajamo
 			Baket* b = new Baket;
-			
+			b->baketLen = 0;
 			for (int i = 0; i < table[addr]->elems.size(); i++) {
 				b->elems.push_back(table[addr]->elems[i]);
 				b->baketLen++;
@@ -170,9 +181,11 @@ bool HashTable::deleteKey(long index) {
 				b->elems.push_back(table[pos]->elems[i]);
 				b->baketLen++;
 			}
-			b->depthBaket--;
+			
 			table[addr]->depthBaket--;
 			table[pos]->depthBaket--;
+			b->pointers = 0;
+			b->depthBaket = table[addr]->depthBaket;
 			b->pointers += table[addr]->pointers;
 			b->pointers += table[pos]->pointers;
 			
@@ -193,6 +206,10 @@ bool HashTable::deleteKey(long index) {
 					table[i]->pointers--;
 				}
 
+			}
+			else {
+				table[addr] = b;
+				table[pos] = b;
 			}
 		}
 

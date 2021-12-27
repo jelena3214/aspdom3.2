@@ -21,8 +21,15 @@ int main() {
 	Student st9(22, "jeke", "peke");
 	ht.insertKey(st9);
 	if(ht.findKey(5))cout << *ht.findKey(5);
-	ht.deleteKey(10);
-	ht.deleteKey(0);
+	//ht.deleteKey(10);
+	//ht.deleteKey(0);
+	//ht.deleteKey(12);
+	Student st10(20, "jeke", "peke");
+	ht.insertKey(st10);
+	Student st11(25, "jeke", "peke");
+	ht.insertKey(st11);
 	ht.deleteKey(12);
+	ht.deleteKey(25);
+	ht.deleteKey(22);
 	cout << ht;
 }
