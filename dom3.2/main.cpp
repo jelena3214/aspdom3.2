@@ -2,7 +2,7 @@
 using namespace std;
 int main() {
 
-	HashTable* ht = nullptr;
+	/*HashTable* ht = nullptr;
 	Student* st = nullptr;
 
 	while (true) {
@@ -51,7 +51,7 @@ int main() {
 			*st += sifra;
 		}
 		if (choice == 4) {
-			if (ht->insertKey(*st) == false) cout << "Student je vec u hes tabeli" << endl;
+			ht->insertKey(*st);
 		}
 		if (choice == 5) {
 			cout << "Unesite indeks studenta kojeg brisete iz tabele\n";
@@ -85,8 +85,8 @@ int main() {
 		if (choice == 12) {
 			exit(0);
 		}
-	}
-	/*HashTable ht(1, 64, 2);
+	}*/
+	HashTable ht(1, 64, 2);
 	Student st1(1, "jeke", "peke");
 	Student st2(0, "jeke", "peke");
 	Student st3(3, "jeke", "peke");
@@ -102,27 +102,34 @@ int main() {
 	ht.deleteKey(5);
 	ht.deleteKey(13);
 	
-	Student st7(15, "jeke", "peke");
+	Student st7(6, "jeke", "peke");
 	ht.insertKey(st7);
 	Student st8(10, "jeke", "peke");
 	ht.insertKey(st8);
-	Student st9(22, "jeke", "peke");
+	Student st9(9, "jeke", "peke");
 	ht.insertKey(st9);
+	Student st19(4, "jeke", "peke");
+	ht.insertKey(st19);
 	//if(ht.findKey(5))cout << *ht.findKey(5);
-	ht.deleteKey(10);
 	ht.deleteKey(0);
-	Student st10(20, "jeke", "peke");
+	ht.deleteKey(10);
+	ht.deleteKey(9);
+	
+	/*ht.deleteKey(13);
+	ht.deleteKey(13);
+	
+	Student st10(11, "jeke", "peke");
 	ht.insertKey(st10);
 	Student st11(18, "jeke", "peke");
 	ht.insertKey(st11);
 	//ht.deleteKey(50);
 	//ht.deleteKey(22);
-	ht.insertKey(st11);
-	Student st12(48, "jeke", "peke");
-	ht.insertKey(st12);
+	
+	//Student st12(48, "jeke", "peke");
+	//ht.insertKey(st12);
 	Student st13(275, "jeke", "peke");
 	ht.insertKey(st13);
 	Student st14(89, "jeke", "peke");
-	ht.insertKey(st14);
-	cout << ht;*/
+	ht.insertKey(st14); */
+	cout << ht;
 }
