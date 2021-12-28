@@ -51,7 +51,7 @@ int main() {
 			*st += sifra;
 		}
 		if (choice == 4) {
-			if (!ht->insertKey(*st)) cout << "Student je vec u hes tabeli" << endl;
+			if (ht->insertKey(*st) == false) cout << "Student je vec u hes tabeli" << endl;
 		}
 		if (choice == 5) {
 			cout << "Unesite indeks studenta kojeg brisete iz tabele\n";
@@ -86,7 +86,7 @@ int main() {
 			exit(0);
 		}
 	}
-	/*HashTable ht(2, 64, 2);
+	/*HashTable ht(1, 64, 2);
 	Student st1(1, "jeke", "peke");
 	Student st2(0, "jeke", "peke");
 	Student st3(3, "jeke", "peke");
@@ -97,25 +97,26 @@ int main() {
 	ht.insertKey(st4);
 	Student st5(5, "jeke", "peke");
 	ht.insertKey(st5);
-	Student st6(12, "jeke", "peke");
+	Student st6(13, "jeke", "peke");
 	ht.insertKey(st6);
+	ht.deleteKey(5);
+	ht.deleteKey(13);
+	
 	Student st7(15, "jeke", "peke");
 	ht.insertKey(st7);
 	Student st8(10, "jeke", "peke");
 	ht.insertKey(st8);
 	Student st9(22, "jeke", "peke");
 	ht.insertKey(st9);
-	if(ht.findKey(5))cout << *ht.findKey(5);
-	//ht.deleteKey(10);
-	//ht.deleteKey(0);
-	//ht.deleteKey(12);
+	//if(ht.findKey(5))cout << *ht.findKey(5);
+	ht.deleteKey(10);
+	ht.deleteKey(0);
 	Student st10(20, "jeke", "peke");
 	ht.insertKey(st10);
-	Student st11(25, "jeke", "peke");
+	Student st11(18, "jeke", "peke");
 	ht.insertKey(st11);
-	ht.deleteKey(12);
-	ht.deleteKey(25);
-	ht.deleteKey(22);
+	//ht.deleteKey(50);
+	//ht.deleteKey(22);
 	ht.insertKey(st11);
 	Student st12(48, "jeke", "peke");
 	ht.insertKey(st12);

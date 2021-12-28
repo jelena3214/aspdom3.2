@@ -1,8 +1,6 @@
 #include "hashtable.h"
 //ENUM
 
-//TO DO: destruktor
-
 //OVDE SVE UZIMAM P POSLEDNJIH BITOVA
 bool HashTable::insertKey(Student& st)
 {
@@ -14,6 +12,13 @@ bool HashTable::insertKey(Student& st)
 	addr = getAdr(index);
 	int n = 1;
 	for (int i = 0; i < baket; i++) {
+		if (table[addr]->elems.size() == 0) {
+			Elem* newElem = new Elem{ index, &st };
+			table[addr]->elems.push_back(newElem);
+			table[addr]->baketLen = 1;
+			table[addr]->pointers = 1;
+			return true;
+		}
 		if (table[addr]->elems[i]->key == index) { //vec postojki kljuc
 			return false;
 		}
@@ -71,16 +76,16 @@ bool HashTable::insertKey(Student& st)
 			}
 		}
 
+		if (depth > p) {
+			cout << "Nije moguce ubacivanje\n";
+			exit(0);
+		}
+
 		if (newBaket->elems.size() > baket || table[addr]->elems.size() > baket) {//povecamo depth jer uzimamo jos jedan bit
 			size = pow(2, depth);
 			if (n > 2)setB(1);
 			n++;
 
-		}
-		else if (depth > p) {
-			cout << "Nije moguce ubacivanje\n";
-			return false;
-			break;
 		}
 		else {
 			break;
@@ -107,6 +112,7 @@ bool HashTable::insertKey(Student& st)
 		int diff = newSize - size;
 		newBaket->pointers++;
 		table[addr + diff] = newBaket;
+		return true;
 
 	}
 	else {
@@ -132,6 +138,7 @@ bool HashTable::insertKey(Student& st)
 		return true;
 	}
 	
+	return false;
 
 }
 
@@ -162,13 +169,17 @@ bool HashTable::deleteKey(long index) {
 		int size = pow(2, depth);
 		
 		int pos, flag = 0; //vidi da l treba while?
-		if (addr + l < size) {
-			pos = addr + l;
-			flag = 1;
-		}
-		else if (addr - l >= 0) {
-			pos = addr - l;
-			flag = 1;
+		while (true) {
+			if (addr + l > 0 && addr + l < size) {
+				pos = addr + l;
+				flag = 1;
+			}
+			else if (addr - l >= 0) {
+				pos = addr - l;
+				flag = 1;
+			}
+			if (table[pos]->depthBaket == table[addr]->depthBaket  && pos != addr)break;
+			l *= 2;
 		}
 		if (flag && table[addr]->elems.size() + table[pos]->elems.size() <= baket) {//spajamo
 			Baket* b = new Baket;
@@ -208,6 +219,7 @@ bool HashTable::deleteKey(long index) {
 
 			}
 			else {
+
 				table[addr] = b;
 				table[pos] = b;
 			}
@@ -276,13 +288,13 @@ int HashTable::keysInPlace(int i)
 	return num;
 }
 
-/*HashTable::~HashTable()
+HashTable::~HashTable()
 {
 	int size = pow(2, depth);
 	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < baket; j++) {
-			if (table[i]!=nullptr && table[i]->elems.size()>0)delete(table[i]->elems[j]), table[i]->elems[j] = nullptr;
+		for (int j = 0; j < table[i]->elems.size(); j++) {
+			if (table[i]!=nullptr)delete(table[i]->elems[j]), table[i]->elems[j] = nullptr;
 		}
 		if (table[i] != nullptr && table[i]->elems.size() > 0)delete(table[i]), table[i] = nullptr;
 	}
-}*/
+}

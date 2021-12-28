@@ -73,7 +73,7 @@ public:
 			table.push_back(b);
 		}
 	};
-	//~HashTable();
+	~HashTable();
 	Student* findKey(long index);
 	bool insertKey(Student& st);
 	bool deleteKey(long index);
